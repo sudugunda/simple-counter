@@ -1,36 +1,44 @@
-import React, { useState, useEffect } from 'react'
+import React,{ useState, useContext, useEffect } from 'react'
 import { GrAddCircle } from "react-icons/gr";
 import { GrSubtractCircle } from "react-icons/gr"; 
 import { RiDeleteBin6Line } from "react-icons/ri";
+import { CounterContext } from './context';
 import './Counter.css';
 
-function Counter({id, counter, deleteCounter, countCountersInc, countCountersDec}) {
+export default function Counter({id, count, index}) {
 
-    const [count, setCount] = useState(counter);
-    
-    function incCount(){
-        if(count === 0) countCountersInc(id);
+    const {state, dispatch} = useContext(CounterContext);
+    const [ncount, setNcount] = useState(0);
+    const [show, setShow] = useState(true);
 
-        setCount(count + 1);
-    }
+    // useEffect(()=> {
+    //     console.log('render');
+    // }, [state.counters]);
 
-    function decCount(){
-        if(count === 1) countCountersDec(id);
-        if(count > 0) setCount(count - 1);
-    }
+    const incCount = () => {
+        if(ncount === 0){
+            dispatch({type: 'increment'})
+        }
+        setNcount(ncount + 1);
+    };
 
-    function deleteC(){
-        deleteCounter(id, count);
-    }
+    const decCount = () => {
+        if(ncount === 1){
+            dispatch({type: 'decrement'})
+        }
+        if(ncount > 0) {setNcount(ncount - 1);}
+    };
+
+    const deleteCounter = () => {
+        dispatch({type: 'delete', id: id})
+    };
 
     return (
-        <div className="counter">
-            <div className="counter-item"><span>{ count ? count : 'Zero' }</span></div>
-            <div className="counter-item" onClick={ () => incCount() }><GrAddCircle /></div>
-            <div className="counter-item" onClick={ () => decCount() }><GrSubtractCircle /></div>
-            <div className="counter-item" onClick={ () => deleteC() }><RiDeleteBin6Line/></div>
+        <div className="counter" key={id}>{index}
+             <div className="counter-item"><span>{ ncount>0 ? ncount : count }</span></div>
+             <div className="counter-item" onClick={ incCount }><GrAddCircle /></div>
+             <div className="counter-item" onClick={ decCount }><GrSubtractCircle /></div>
+             <div className="counter-item" onClick={ deleteCounter }><RiDeleteBin6Line/></div>
         </div>
     )
 }
-
-export default Counter
